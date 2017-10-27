@@ -1,6 +1,5 @@
 #include <QVector>
 #include <iostream>
-using std::
 
 struct holder{
     char sector;
@@ -15,8 +14,9 @@ struct reserved
 
 class Container{
     QVector<holder> holders;
-    QVector<reserved>
+    QVector<reserved> reservedContainer;
     Container(){
+
     }
 
 };
