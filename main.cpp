@@ -60,20 +60,22 @@ int main(int argc, char *argv[])
     SQLHDBC     hdbc; 		// Дескриптор соединения
     SQLHSTMT    hstmt; 	// Дескриптор оператора
     SQLRETURN   retcode; 	// Код возврата
-    SQLCHAR     buf[50];	//
+    SQLCHAR     buf[50];
+    SQLINTEGER  buf_size=50;//
     SQLINTEGER buf_len;
+    SQLINTEGER param;
+    TIMESTAMP_STRUCT dateTime;
 
     retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
     retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
     retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
     retcode = SQLConnectA(hdbc, (SQLCHAR*) "mypg", SQL_NTS, (SQLCHAR*) "postgres", SQL_NTS,  (SQLCHAR*) "1", SQL_NTS);
     retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-    retcode = SQLExecDirectA(hstmt,  (SQLCHAR*) "SELECT entry('A34', FALSE, 'Ferrari', 'M4J0R', 'Yellow')",   SQL_NTS);
+    retcode = SQLExecDirectA(hstmt,  (SQLCHAR*) "SELECT entry from reserved",   SQL_NTS);
     while((retcode = SQLFetch(hstmt))==SQL_SUCCESS){
-        SQLGetData(hstmt, 1, SQL_C_CHAR, buf, 50, &buf_len);
-        std::cout<<buf<<std::endl;
+        SQLGetData(hstmt, 1, SQL_C_TIMESTAMP, &dateTime, sizeof(TIMESTAMP_STRUCT), &buf_len);
+        std::cout<<(int)dateTime.hour<<std::endl;
     }
-    char c;\
     /*SQLHENV henv;
        SQLHDBC hdbc;
        SQLHSTMT hstmt = 0;

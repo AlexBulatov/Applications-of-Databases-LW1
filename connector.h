@@ -6,6 +6,10 @@ class Connector{
 public:
     void executeQuery(char *query);
     void executeScalar(char *query);
+    char* ReadChar(int col);
+    int ReadInt(int col);
+    Connector();
+    Connector(char* DSN, char* database, char* password);
     ~Connector();
 private:
     SQLHENV     henv;     	// Дескриптор окружения
@@ -14,8 +18,8 @@ private:
     SQLRETURN   retcode; 	// Код возврата
     SQLCHAR     buf[50];	//
     SQLINTEGER buf_len;
-    Connector *instance;
-    Connector();
-    Connector(char* DSN, char* database, char* password);
+    SQLINTEGER buf_size;
+    SQLINTEGER bufInt;
+    SQL_DATE_STRUCT dateTime;
 };
 

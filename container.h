@@ -1,14 +1,22 @@
 #include <QVector>
 #include <iostream>
+#include <ctime>
+#include "connector.h"
 
 struct holder{
     char sector;
     short place;
 };
 
+
 struct reserved
 {
     char place[5];
+    char car[40];
+    char color[20];
+    char plate[8];
+    tm entry;
+    bool night;
     reserved() {}
 };
 

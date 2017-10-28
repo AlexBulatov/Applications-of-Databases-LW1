@@ -27,12 +27,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     connector.cpp \
-    parking.cpp
+    container.cpp
 
 HEADERS += \
         mainwindow.h \
     connector.h \
-    parking.h
+    container.h
 
 LIBS += libodbc32
 
