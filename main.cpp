@@ -50,30 +50,6 @@
 
 int main(/*int argc, char *argv[]*/)
 {
-        /*SQLHENV     henv;
-        SQLHDBC     hdbc;
-        SQLHSTMT    hstmt;
-        SQLRETURN   retcode;
-        SQLCHAR     buf[50];
-        SQLINTEGER  buf_size=50;
-        SQLINTEGER buf_len;
-        SQLINTEGER param;
-        TIMESTAMP_STRUCT dateTime;
-
-        retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-        retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
-        retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-        retcode = SQLConnectA(hdbc, (SQLCHAR*) "mypg", SQL_NTS, (SQLCHAR*) "postgres", SQL_NTS,  (SQLCHAR*) "1", SQL_NTS);
-        retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-        retcode = SQLExecDirectA(hstmt,  (SQLCHAR*) "SELECT * from freespace()",   SQL_NTS);
-        while ((retcode = SQLFetch(hstmt)) == SQL_SUCCESS) {
-            retcode=SQLGetData(hstmt, 1, SQL_C_CHAR, buf, buf_size, &buf_len);
-            retcode=SQLGetData(hstmt, 2, SQL_INTEGER, &param, 0, &buf_len);
-            std::cout << buf[0]<<param<< std::endl;
-        }*/
-
-
-
     Container container;
     if (!container.getFreeSpace()){
         std::cout<<"Error";

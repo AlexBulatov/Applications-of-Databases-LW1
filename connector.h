@@ -107,7 +107,6 @@ public:
         return Query(hstmt, queryText);
     }
 
-
 private:
     SQLHENV     henv;
     SQLHDBC     hdbc;

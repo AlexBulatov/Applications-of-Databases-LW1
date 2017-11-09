@@ -52,9 +52,9 @@ public:
                 tmp.place=connect.readInt(2);
                 holderContainer.push_back(tmp);
             }
-            for(int i=0; i<holderContainer.size(); i++){
+            /*for(int i=0; i<holderContainer.size(); i++){
                 std::cout<<holderContainer[i].sector<<holderContainer[i].place<<std::endl;
-            }
+            }*/
             return true;
         }
         return false;
