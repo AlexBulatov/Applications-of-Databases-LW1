@@ -3,7 +3,8 @@
 #include <odbcinst.h>
 #include <sqlext.h>
 #include <string>
-
+#include <iostream>
+#include <ctime>
 enum class FETCH_RESULT {
     SUCCESS,
     FAIL,
@@ -35,8 +36,18 @@ public:
         return FETCH_RESULT::END;
     }
 
-    std::string getError() {
-
+    std::string getError(int iRecord) {
+        SQLCHAR state[6];
+        SQLINTEGER errorCode;
+        SQLCHAR message[100];
+        SQLSMALLINT messageLen;
+        SQLGetDiagRec(SQL_HANDLE_STMT, stmt, iRecord, (SQLWCHAR*)state, &errorCode,(SQLWCHAR*) message, 100,  &messageLen);
+        std::cout<<state;
+        std::cout<<message;
+        std::string msg=(char*)state;
+        msg+=" ";
+        msg+=(char*)message;
+        return msg;
     }
 
     SQLHSTMT getHandler() {
@@ -62,7 +73,7 @@ public:
     ~Connector() {
         retcode = SQLDisconnect(hdbc);
         retcode = SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
-//        retcode = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+        retcode = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
         retcode = SQLFreeHandle(SQL_HANDLE_ENV, henv);
     }
 
@@ -76,26 +87,37 @@ public:
         return (char*)buf;
     }
 
+    char readSymbol(int col){
+        retcode = SQLGetData(hstmt, col, SQL_C_CHAR, symbol, 2, &buf_len);
+        return (char)symbol[0];
+    }
+
     int readInt(int col) {
-        retcode = SQLGetData(hstmt, col, SQL_INTEGER, &bufInt, sizeof(SQL_INTEGER), &buf_len);
+        retcode = SQLGetData(hstmt, col, SQL_INTEGER, &bufInt, 0, &buf_len);
         return (int)bufInt;
     }
 
-    Query createQuery(const char *queryText) {
-        SQLHSTMT stmt;
-        retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &stmt);
-        return Query(stmt, queryText);
+    TIMESTAMP_STRUCT readTimestamp(int col) {
+        retcode = SQLGetData(hstmt, col, SQL_TIMESTAMP, &dateTime, 0, &buf_len);
+        return dateTime;
     }
 
+    Query createQuery(const char *queryText) {
+        retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+        return Query(hstmt, queryText);
+    }
+
+
 private:
-    SQLHENV     henv;     	// Дескриптор окружения
-    SQLHDBC     hdbc; 		// Дескриптор соединения
-    SQLHSTMT    hstmt; 	// Дескриптор оператора
-    SQLRETURN   retcode; 	// Код возврата
-    SQLCHAR     buf[50];	//
+    SQLHENV     henv;
+    SQLHDBC     hdbc;
+    SQLHSTMT    hstmt;
+    SQLRETURN   retcode;
+    SQLCHAR     buf[50];
+    SQLCHAR     symbol[2];
     SQLINTEGER buf_len = 50;
     SQLINTEGER buf_size = 50;
     SQLINTEGER bufInt;
-    SQL_DATE_STRUCT dateTime;
+    TIMESTAMP_STRUCT dateTime;
 };
 
