@@ -50,29 +50,8 @@
 
 int main(/*int argc, char *argv[]*/)
 {
-//    SQLHENV     henv;     	// Дескриптор окружения
-//    SQLHDBC     hdbc; 		// Дескриптор соединения
-//    SQLHSTMT    hstmt; 	// Дескриптор оператора
-//    SQLRETURN   retcode; 	// Код возврата
-//    SQLCHAR     buf[50];
-//    SQLINTEGER  buf_size=50;//
-//    SQLINTEGER buf_len;
-//    SQLINTEGER param;
-//    TIMESTAMP_STRUCT dateTime;
-
-//    retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-//    retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
-//    retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-//    retcode = SQLConnectA(hdbc, (SQLCHAR*) "mypg", SQL_NTS, (SQLCHAR*) "postgres", SQL_NTS,  (SQLCHAR*) "1", SQL_NTS);
-//    retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-//    retcode = SQLExecDirectA(hstmt,  (SQLCHAR*) "SELECT entry from reserved",   SQL_NTS);
-//    while ((retcode = SQLFetch(hstmt)) == SQL_SUCCESS) {
-//        SQLGetData(hstmt, 1, SQL_C_TIMESTAMP, &dateTime, sizeof(TIMESTAMP_STRUCT), &buf_len);
-//        std::cout << dateTime.hour << std::endl;
-//    }
-
     Connector cnt;
-    auto query = cnt.createQuery("SELECT * FROM reserved");
+    auto query = cnt.createQuery("SELECT * FROM freespace()");
     reserved rsv;
     rsv.bind(query);
     query.exec();
@@ -81,7 +60,6 @@ int main(/*int argc, char *argv[]*/)
         std::cout << rsv.place << std::endl;
         res = query.fetchOne();
     }
-
     return 0;
 }
 

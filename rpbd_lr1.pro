@@ -26,9 +26,7 @@ CONFIG += c++11
 
 
 SOURCES += \
-        main.cpp \
-    connector.cpp \
-    container.cpp
+        main.cpp
 
 HEADERS += \
     connector.h \

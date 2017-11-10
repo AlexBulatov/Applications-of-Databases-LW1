@@ -36,7 +36,7 @@ public:
     }
 
     std::string getError() {
-
+        return "";
     }
 
     SQLHSTMT getHandler() {
@@ -62,7 +62,7 @@ public:
     ~Connector() {
         retcode = SQLDisconnect(hdbc);
         retcode = SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
-//        retcode = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+        retcode = SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
         retcode = SQLFreeHandle(SQL_HANDLE_ENV, henv);
     }
 
@@ -82,17 +82,16 @@ public:
     }
 
     Query createQuery(const char *queryText) {
-        SQLHSTMT stmt;
-        retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &stmt);
-        return Query(stmt, queryText);
+        retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+        return Query(hstmt, queryText);
     }
 
 private:
-    SQLHENV     henv;     	// Дескриптор окружения
-    SQLHDBC     hdbc; 		// Дескриптор соединения
-    SQLHSTMT    hstmt; 	// Дескриптор оператора
-    SQLRETURN   retcode; 	// Код возврата
-    SQLCHAR     buf[50];	//
+    SQLHENV     henv;
+    SQLHDBC     hdbc;
+    SQLHSTMT    hstmt;
+    SQLRETURN   retcode;
+    SQLCHAR     buf[50];
     SQLINTEGER buf_len = 50;
     SQLINTEGER buf_size = 50;
     SQLINTEGER bufInt;
