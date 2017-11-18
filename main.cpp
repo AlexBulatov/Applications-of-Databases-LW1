@@ -1,127 +1,108 @@
 ﻿#include "connector.h"
 #include "container.h"
 #include <iostream>
+#include <sstream>
+using namespace std;
 
-//#define STR_LEN 128 + 1
-//#define REM_LEN 254 + 1
+string getReserved(const reserved &value){
+    stringstream ss;
+    ss<<"\nPlace:\t"<<value.place
+     <<"\nCar:\t"<<value.car
+     <<"\nNumber:\t"<<value.plate
+     <<"\nColor:\t"<<value.color
+     <<"\nNighter:\t"<<((value.night)?"TRUE":"FALSE");
+    return ss.str();
+}
 
-//SQLCHAR szSchema[STR_LEN];
-//SQLCHAR szCatalog[STR_LEN];
-//SQLCHAR szColumnName[STR_LEN];
-//SQLCHAR szTableName[STR_LEN];
-//SQLCHAR szTypeName[STR_LEN];
-//SQLCHAR szRemarks[REM_LEN];
-//SQLCHAR szColumnDefault[STR_LEN];
-//SQLCHAR szIsNullable[STR_LEN];
+string getHolder(const holder &value){
+    stringstream ss;
+    ss<<value.sector<<value.place;
+    return ss.str();
+}
 
-//SQLINTEGER ColumnSize;
-//SQLINTEGER BufferLength;
-//SQLINTEGER CharOctetLength;
-//SQLINTEGER OrdinalPosition;
+reserved setReserved(){
+    reserved inserted;
+    cout<<"Place: ";
+    cin>>inserted.place;
+    cout<<"Car: ";
+    cin>>inserted.car;
+    cout<<"Color: ";
+    cin>>inserted.color;
+    cout<<"Registry number: ";
+    cin>>inserted.plate;
+    cout<<"On night";
+    cin>>inserted.night;
+    return inserted;
+}
 
-//SQLSMALLINT DataType;
-//SQLSMALLINT DecimalDigits;
-//SQLSMALLINT NumPrecRadix;
-//SQLSMALLINT Nullable;
-//SQLSMALLINT SQLDataType;
-//SQLSMALLINT DatetimeSubtypeCode;
 
-//SQLHSTMT hstmt = NULL;
+reserved setReservedOnPlace(const char *place){
+    reserved inserted;
+    strcpy(inserted.place, place);
+    cout<<"Car: ";
+    cin>>inserted.car;
+    cout<<"Color: ";
+    cin>>inserted.color;
+    cout<<"Registry number: ";
+    cin>>inserted.plate;
+    cout<<"On night";
+    cin>>inserted.night;
+    return inserted;
+}
 
-//// Declare buffers for bytes available to return
-//SQLINTEGER cbCatalog;
-//SQLINTEGER cbSchema;
-//SQLINTEGER cbTableName;
-//SQLINTEGER cbColumnName;
-//SQLINTEGER cbDataType;
-//SQLINTEGER cbTypeName;
-//SQLINTEGER cbColumnSize;
-//SQLLEN cbBufferLength;
-//SQLINTEGER cbDecimalDigits;
-//SQLINTEGER cbNumPrecRadix;
-//SQLINTEGER cbNullable;
-//SQLINTEGER cbRemarks;
-//SQLINTEGER cbColumnDefault;
-//SQLINTEGER cbSQLDataType;
-//SQLINTEGER cbDatetimeSubtypeCode;
-//SQLINTEGER cbCharOctetLength;
-//SQLINTEGER cbOrdinalPosition;
-//SQLINTEGER cbIsNullable;
-
-int main(/*int argc, char *argv[]*/)
+string menu = "1) Entry to parking\n2) Free place\n3) Update info\n4) See info about car\n\
+5) Count all nighters\n6) Show all free places\n7) Find car\n8) Exit\n";
+int main()
 {
     Container container;
-    if (!container.getFreeSpace()){
-        std::cout<<"Error";
+    bool running=true;
+    char switcher=0;
+    char place[5];
+    char filter[50];
+    reserved singleton;
+    while(running){
+        cout<<menu;
+        cin>>switcher;
+        switch (switcher) {
+        case '1':
+            container.entryCar(setReserved());
+            break;
+        case '2':
+            cout<<"Enter place: ";
+            cin>>place;
+            container.setSpaceFree(place);
+            break;
+        case '3':
+            cout<<"Enter place: ";
+            cin>>place;
+            container.updateRecord(setReservedOnPlace(place));
+            break;
+        case '4':
+            cout<<"Enter place: ";
+            cin>>place;
+            cout<<getReserved(container.getRecord(place))<<endl;
+            break;
+        case '5':
+            cout<<container.countNighters()<<endl;
+            break;
+        case '6':
+            container.getFreeSpace();
+            cout<<endl;
+            break;
+        case '7':
+            cout<<"Enter filter string: ";
+            cin>>filter;
+            container.findRecord(filter);
+            for(int i=0; i<container.sizeReserved(); i++){
+                cout<<getReserved(container.reservedGetAt(i))<<endl<<endl;
+            }
+            break;
+        case '8':
+            running=false;
+            break;
+        default:
+            break;
+        }
     }
     return 0;
 }
-
-//    SQLHENV     henv;
-//    SQLHDBC     hdbc;
-//    SQLHSTMT    hstmt;
-//    SQLRETURN   retcode;
-//    SQLCHAR     buf[50];
-//    SQLINTEGER  buf_size=50;
-//    SQLINTEGER buf_len;
-//    SQLINTEGER param;
-//    TIMESTAMP_STRUCT dateTime;
-
-//    retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-//    retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
-//    retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-//    retcode = SQLConnectA(hdbc, (SQLCHAR*) "mypg", SQL_NTS, (SQLCHAR*) "postgres", SQL_NTS,  (SQLCHAR*) "1", SQL_NTS);
-//    retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-//    retcode = SQLExecDirectA(hstmt,  (SQLCHAR*) "SELECT entry from reserved",   SQL_NTS);
-//    while ((retcode = SQLFetch(hstmt)) == SQL_SUCCESS) {
-//        SQLGetData(hstmt, 1, SQL_C_TIMESTAMP, &dateTime, sizeof(TIMESTAMP_STRUCT), &buf_len);
-//        std::cout << dateTime.hour << std::endl;
-//    }
-
-
-/*SQLHENV henv;
-   SQLHDBC hdbc;
-   SQLHSTMT hstmt = 0;
-   SQLRETURN retcode;
-
-   retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
-   retcode = SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
-   retcode = SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
-   retcode = SQLSetConnectAttr(hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
-   retcode = SQLConnectA(hdbc, (SQLCHAR*) "mypg", SQL_NTS, (SQLCHAR*) "postgres", SQL_NTS,  (SQLCHAR*) "1", SQL_NTS);
-   retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
-   retcode = SQLColumnsA(hstmt, NULL, 0, NULL, 0, (SQLCHAR*)"CUSTOMERS", SQL_NTS, NULL, 0);
-
-   if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
-      // Bind columns in result set to buffers
-      SQLBindCol(hstmt, 1, SQL_C_CHAR, szCatalog, STR_LEN,&cbCatalog);
-      SQLBindCol(hstmt, 2, SQL_C_CHAR, szSchema, STR_LEN, &cbSchema);
-      SQLBindCol(hstmt, 3, SQL_C_CHAR, szTableName, STR_LEN,&cbTableName);
-      SQLBindCol(hstmt, 4, SQL_C_CHAR, szColumnName, STR_LEN, &cbColumnName);
-      SQLBindCol(hstmt, 5, SQL_C_SSHORT, &DataType, 0, &cbDataType);
-      SQLBindCol(hstmt, 6, SQL_C_CHAR, szTypeName, STR_LEN, &cbTypeName);
-      SQLBindCol(hstmt, 7, SQL_C_SLONG, &ColumnSize, 0, &cbColumnSize);
-      SQLBindCol(hstmt, 8, SQL_C_SLONG, &BufferLength, 0, &cbBufferLength);
-      SQLBindCol(hstmt, 9, SQL_C_SSHORT, &DecimalDigits, 0, &cbDecimalDigits);
-      SQLBindCol(hstmt, 10, SQL_C_SSHORT, &NumPrecRadix, 0, &cbNumPrecRadix);
-      SQLBindCol(hstmt, 11, SQL_C_SSHORT, &Nullable, 0, &cbNullable);
-      SQLBindCol(hstmt, 12, SQL_C_CHAR, szRemarks, REM_LEN, &cbRemarks);
-      SQLBindCol(hstmt, 13, SQL_C_CHAR, szColumnDefault, STR_LEN, &cbColumnDefault);
-      SQLBindCol(hstmt, 14, SQL_C_SSHORT, &SQLDataType, 0, &cbSQLDataType);
-      SQLBindCol(hstmt, 15, SQL_C_SSHORT, &DatetimeSubtypeCode, 0, &cbDatetimeSubtypeCode);
-      SQLBindCol(hstmt, 16, SQL_C_SLONG, &CharOctetLength, 0, &cbCharOctetLength);
-      SQLBindCol(hstmt, 17, SQL_C_SLONG, &OrdinalPosition, 0, &cbOrdinalPosition);
-      SQLBindCol(hstmt, 18, SQL_C_CHAR, szIsNullable, STR_LEN, &cbIsNullable);
-
-      while (SQL_SUCCESS == retcode) {
-         retcode = SQLFetch(hstmt);
-
-         if (retcode == SQL_ERROR || retcode == SQL_SUCCESS_WITH_INFO)
-            0;   // show_error();
-         if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)
-            0;   // Process fetched data
-         else
-            break;
-
-      }
-   }*/
