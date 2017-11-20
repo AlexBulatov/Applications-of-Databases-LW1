@@ -3,7 +3,8 @@
 #include <odbcinst.h>
 #include <sqlext.h>
 #include <string>
-
+#include <iostream>
+#include <ctime>
 enum class FETCH_RESULT {
     SUCCESS,
     FAIL,
@@ -33,10 +34,6 @@ public:
             return FETCH_RESULT::SUCCESS;
         }
         return FETCH_RESULT::END;
-    }
-
-    std::string getError() {
-        return "";
     }
 
     SQLHSTMT getHandler() {
@@ -76,9 +73,19 @@ public:
         return (char*)buf;
     }
 
+    char readSymbol(int col){
+        retcode = SQLGetData(hstmt, col, SQL_C_CHAR, symbol, 2, &buf_len);
+        return (char)symbol[0];
+    }
+
     int readInt(int col) {
-        retcode = SQLGetData(hstmt, col, SQL_INTEGER, &bufInt, sizeof(SQL_INTEGER), &buf_len);
+        retcode = SQLGetData(hstmt, col, SQL_INTEGER, &bufInt, 0, &buf_len);
         return (int)bufInt;
+    }
+
+    TIMESTAMP_STRUCT readTimestamp(int col) {
+        retcode = SQLGetData(hstmt, col, SQL_TIMESTAMP, &dateTime, 0, &buf_len);
+        return dateTime;
     }
 
     Query createQuery(const char *queryText) {
@@ -92,9 +99,10 @@ private:
     SQLHSTMT    hstmt;
     SQLRETURN   retcode;
     SQLCHAR     buf[50];
+    SQLCHAR     symbol[2];
     SQLINTEGER buf_len = 50;
     SQLINTEGER buf_size = 50;
     SQLINTEGER bufInt;
-    SQL_DATE_STRUCT dateTime;
+    TIMESTAMP_STRUCT dateTime;
 };
 
