@@ -36,20 +36,6 @@ public:
         return FETCH_RESULT::END;
     }
 
-    std::string getError(int iRecord) {
-        SQLCHAR state[6];
-        SQLINTEGER errorCode;
-        SQLCHAR message[100];
-        SQLSMALLINT messageLen;
-        SQLGetDiagRec(SQL_HANDLE_STMT, stmt, iRecord, (SQLWCHAR*)state, &errorCode,(SQLWCHAR*) message, 100,  &messageLen);
-        std::cout<<state;
-        std::cout<<message;
-        std::string msg=(char*)state;
-        msg+=" ";
-        msg+=(char*)message;
-        return msg;
-    }
-
     SQLHSTMT getHandler() {
         return stmt;
     }
